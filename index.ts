@@ -1,13 +1,14 @@
-import * as Sentry from "@sentry/node"
 import { config } from "dotenv"
+config()
+
+import * as Sentry from "@sentry/node"
 import * as cron from "node-cron"
 import { handleGoodbye, handleSubscription, onLeaveMember, onMessage, onNewChatMember, sendMessage, startBot } from "./src/bot"
 import { check } from "./src/checker"
 import { GOODBYE } from "./src/constants"
 import { removeSubscriptions } from "./src/db"
 import { findProvince } from "./src/provinces"
-
-config()
+import { startServer } from "./src/server"
 
 Sentry.init({
   dsn: process.env.SENTRY_URL,
@@ -31,3 +32,4 @@ onLeaveMember(async (chatId: number) => {
 
 cron.schedule("* * * * *", () => check())
 startBot()
+startServer()

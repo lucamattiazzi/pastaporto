@@ -9,6 +9,7 @@ COPY ./.env ./
 RUN yarn
 
 COPY ./bin ./bin
+RUN mkdir db
 RUN yarn setup
 
 COPY ./src ./src

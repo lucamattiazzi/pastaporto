@@ -1,4 +1,5 @@
 export const GOODBYE = "CIAONE"
+export const TRACK_LOG = "./db/tracker.jsonlines"
 
 export const provinces = [
   {

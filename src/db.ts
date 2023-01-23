@@ -2,7 +2,7 @@ import * as sqlite3 from "sqlite3"
 import { SubscriptionGroup } from "./types"
 
 sqlite3.verbose()
-const db = new sqlite3.Database("./db.sqlite")
+const db = new sqlite3.Database("./db/db.sqlite")
 
 export async function retrieveSubscriptionsByProvince(): Promise<SubscriptionGroup[]> {
   return new Promise((resolve, reject) => {

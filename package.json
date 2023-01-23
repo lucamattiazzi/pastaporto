@@ -19,10 +19,11 @@
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
-    "@types/express": "^4.17.15",
+    "@types/express": "^4.17.17",
     "@types/fast-levenshtein": "^0.0.2",
     "@types/node": "^18.11.18",
     "@types/node-cron": "^3.0.7",
+    "@types/serve-index": "^1.9.1",
     "@types/sqlite3": "^3.1.8",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
@@ -42,6 +43,7 @@
     "node-cron": "^3.0.2",
     "node-html-parser": "^6.1.4",
     "nodemon": "^2.0.20",
+    "serve-index": "^1.9.1",
     "sqlite3": "^5.1.4",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4"

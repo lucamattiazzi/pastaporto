@@ -3,3 +3,5 @@ node_modules
 *.log
 db.sqlite
 build
+.ipynb_checkpoints
+tracker.jsonlines
