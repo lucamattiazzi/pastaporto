@@ -15,6 +15,7 @@ export async function check(): Promise<void> {
     const available = await retrieveAvailable(province)
     const currentlyAvailableDescriptions = currentlyAvailable.map(c => c.description)
     const difference = available.filter(a => !currentlyAvailableDescriptions.includes(a.description))
+    console.log("difference", difference)
     const shouldSend = Boolean(currentlyAvailableByProvince[province])
     if (shouldSend) {
       for (const telegramId of telegramIds) {

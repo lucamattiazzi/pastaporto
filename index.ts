@@ -1,38 +1,33 @@
+import * as Sentry from "@sentry/node"
+import { config } from "dotenv"
 import * as cron from "node-cron"
-import { onLeaveMember, onMessage, onNewChatMember, sendMessage, startBot } from "./src/bot"
+import { handleGoodbye, handleSubscription, onLeaveMember, onMessage, onNewChatMember, sendMessage, startBot } from "./src/bot"
 import { check } from "./src/checker"
 import { GOODBYE } from "./src/constants"
-import { addSubscription, removeSubscriptions } from "./src/db"
+import { removeSubscriptions } from "./src/db"
 import { findProvince } from "./src/provinces"
 
+config()
+
+Sentry.init({
+  dsn: process.env.SENTRY_URL,
+  tracesSampleRate: 1.0,
+})
+
 onNewChatMember(async (chatId: number) => {
-  sendMessage(chatId, "Benvenutə! Dimmi a che provincia sei interessatə!")
+  await sendMessage(chatId, "Benvenutə! Dimmi a che provincia sei interessatə!")
 })
 
 onMessage(async (chatId: number, text: string) => {
-  if (text === GOODBYE) {
-    await removeSubscriptions(chatId)
-    return sendMessage(chatId, "Ciao! Spero tu sia riucitə a prenotare! Per iscriverti di nuovo, scrivi una provincia.")
-  }
+  if (text === GOODBYE) return handleGoodbye(chatId)
   const province = findProvince(text)
   if (!province) return sendMessage(chatId, "Mi spiace, non conosco questa provincia, riprova!")
-  try {
-    await addSubscription(chatId, province.code)
-    sendMessage(chatId, `Fatto! Inviami il nome di altre province, oppure scrivimi '${GOODBYE}' per cancellarti.`)
-  }
-  catch (err) {
-    console.error(err)
-    sendMessage(chatId, "Mi spiace, s'è scassato qualcosa, riprova!")
-  }
+  await handleSubscription(chatId, province)
 })
 
 onLeaveMember(async (chatId: number) => {
-  removeSubscriptions(chatId).then(console.log).catch(console.error)
+  await removeSubscriptions(chatId)
 })
 
-cron.schedule("* * * * *", () => {
-  check()
-})
-
-check()
+cron.schedule("* * * * *", () => check())
 startBot()
