@@ -3,11 +3,11 @@ import { retrieveAvailable } from "./availability"
 import { sendMessage } from "./bot"
 import { provinces, TRACK_LOG } from "./constants"
 import { retrieveSubscriptionsByProvince } from "./db"
-import { AvailablePlace } from "./types"
+import { Place } from "./types"
 
-const previouslyAvailableByProvince: Record<string, AvailablePlace[]> = {}
+const previouslyAvailableByProvince: Record<string, Place[]> = {}
 
-function trackStatus(difference: AvailablePlace[], code: string, openSpots: number, timestamp: number) {
+function trackStatus(difference: Place[], code: string, openSpots: number, timestamp: number) {
   const status = {
     newInstances: difference.map(d => ({ city: d.city, address: d.address })),
     openSpots: openSpots,
@@ -24,7 +24,7 @@ export async function check(): Promise<void> {
   provinces.forEach(async (province) => {
     const { code } = province
     const provinceSubscriptions = subscriptionsByProvince.find(s => s.province === code)
-    const previouslyAvailable = previouslyAvailableByProvince[code] || [] as AvailablePlace[]
+    const previouslyAvailable = previouslyAvailableByProvince[code] || [] as Place[]
     const currentlyAvailable = await retrieveAvailable(code)
     const previouslyAvailableDescriptions = previouslyAvailable.map(c => c.description)
     const difference = currentlyAvailable.filter(a => !previouslyAvailableDescriptions.includes(a.description))
