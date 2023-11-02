@@ -1,7 +1,7 @@
 
-import axios from "axios"
 import { parse } from "node-html-parser"
-import { Place } from "./types"
+import { Page } from "puppeteer"
+import { Place } from "../types"
 
 export function findPlacesFromHTML(html: string): Place[] {
   const parsed = parse(html)
@@ -19,10 +19,12 @@ export function findPlacesFromHTML(html: string): Place[] {
   return available
 }
 
-export async function retrieveAvailable(province: string): Promise<Place[]> {
-  const response = await axios.get(`https://www.passaportonline.poliziadistato.it/CittadinoAction.do?codop=resultRicercaRegistiProvincia&provincia=${province}`)
-  const html = await response.data
-  const allPlaces = findPlacesFromHTML(html)
+export async function retrieveAvailable(page: Page, province: string): Promise<Place[]> {
+  const url = `https://www.passaportonline.poliziadistato.it/CittadinoAction.do?codop=resultRicercaRegistiProvincia&provincia=${province}`
+  await page.goto(url)
+  await page.waitForNavigation()
+  const pageHtml = await page.content()
+  const allPlaces = findPlacesFromHTML(pageHtml)
   const available = allPlaces.filter(p => p.available)
   return available
 }

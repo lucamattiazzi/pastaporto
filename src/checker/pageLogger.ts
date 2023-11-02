@@ -1,12 +1,7 @@
-import { config } from "dotenv"
-import { appendFile } from "fs/promises"
 import puppeteer, { Page } from "puppeteer"
-import { findPlacesFromHTML } from "../src/checker/availability"
-config()
 
 const SPID_USERNAME = process.env.SPID_USERNAME || ""
 const SPID_PASSWORD = process.env.SPID_PASSWORD || ""
-const FILE = "./all.txt"
 
 function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -77,19 +72,7 @@ async function goToPassportPage(page) {
   await page.waitForNavigation()
 }
 
-async function retrievePlaces(page) {
-  const html = await page.content()
-  const allPlaces = findPlacesFromHTML(html)
-  if (allPlaces.length === 0) throw new Error("No places found")
-  const now = new Date()
-  const timestamp = now.toISOString().slice(0, 19).replace("T", " ")
-  const total = allPlaces.length
-  const available = allPlaces.filter(p => p.available).length
-  const text = `${timestamp} - ${total} total places, ${available} available\n`
-  await appendFile(FILE, text)
-}
-
-async function runAuthFlow() {
+export async function generateLoggedPage(): Promise<Page> {
   const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox", "--disable-setuid-sandbox"] })
   const page = await browser.newPage()
   await goToSPIDAuth(page)
@@ -101,18 +84,5 @@ async function runAuthFlow() {
   await sleep(3000)
   await goToPassportPage(page)
   await sleep(3000)
-  while (true) {
-    try {
-      await retrievePlaces(page)
-      await sleep(60000)
-      await page.reload()
-    } catch (e) {
-      console.error(e)
-      break
-    }
-  }
-  browser.close()
-  process.exit(1)
+  return page
 }
-
-runAuthFlow()

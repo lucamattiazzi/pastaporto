@@ -4,13 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "nodemon ./index.ts",
+    "watch": "nodemon ./src/index.ts",
     "setup": "ts-node ./bin/generateDb.ts",
-    "start": "node ./build/index.js",
-    "ts-start": "ts-node ./index.ts",
+    "start": "node ./build/src/index.js",
+    "dev": "ts-node-esm ./src/index.ts",
     "build": "tsc --build",
     "lint": "eslint ./*.js",
-    "run-test": "ts-node ./bin/test.ts"
+    "test": "ts-node-esm ./bin/test.ts"
   },
   "keywords": [],
   "author": "",

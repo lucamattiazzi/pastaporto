@@ -25,6 +25,11 @@
   },
   "include": [
     "src/*",
-    "index.ts",
+    "src/index.ts",
+    "src/checker/availability.ts",
+    "src/server/index.ts",
+    "src/db/index.ts",
+    "src/constants.ts",
+    "src/bot/utils.ts",
   ]
 }

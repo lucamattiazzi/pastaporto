@@ -13,6 +13,5 @@ RUN mkdir db
 RUN yarn setup
 
 COPY ./src ./src
-COPY ./index.ts ./
 
-CMD ["yarn", "ts-start"]
+CMD ["yarn", "dev"]

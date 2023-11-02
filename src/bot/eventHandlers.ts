@@ -1,14 +1,16 @@
 import { Bot } from "grammy"
-import { retrieveAvailable } from "./availability"
-import { GOODBYE } from "./constants"
-import { addSubscription, removeSubscriptions } from "./db"
-import { Province } from "./types"
+import { GOODBYE } from "../constants"
+import { Db, Province } from "../types"
 
 
 const bot = new Bot(process.env.TELEGRAM_TOKEN as string)
 
-export function sendMessage(chatId: number, text: string) {
-  bot.api.sendMessage(chatId, text)
+export function startBot() {
+  bot.start()
+}
+
+export async function sendMessage(chatId: number, text: string) {
+  await bot.api.sendMessage(chatId, text)
 }
 
 export function onMessage(cb: (chatId: number, text: string) => Promise<void>) {
@@ -24,20 +26,16 @@ export function onLeaveMember(cb: (chatId: number) => Promise<void>) {
   bot.on("message:left_chat_member:me", ctx => cb(ctx.message.chat.id))
 }
 
-export function startBot() {
-  bot.start()
-}
-
-export async function handleGoodbye(chatId: number) {
-  await removeSubscriptions(chatId)
+export async function handleGoodbye(db: Db, chatId: number): Promise<void> {
+  await db.removeSubscriptions(chatId)
   return sendMessage(chatId, "Ciao! Spero tu sia riucitə a prenotare! Per iscriverti di nuovo, scrivi una provincia.")
 }
 
-export async function handleSubscription(chatId: number, province: Province) {
-  await addSubscription(chatId, province.code)
+export async function handleSubscription(db: Db, chatId: number, province: Province) {
+  await db.addSubscription(chatId, province.code)
   await sendMessage(chatId, `Fatto! Inviami il nome di altre province, oppure scrivimi '${GOODBYE}' per cancellarti.\nEcco lo stato attuale per questa provincia:`)
-  const availables = await retrieveAvailable(province.code)
-  for (const available of availables) {
-    await sendMessage(chatId, `C'è posto a ${available.city} - ${available.address}\nApri: ${available.url}`)
-  }
+  // const availables = await db.retrieveAvailable(province.code)
+  // for (const available of availables) {
+  //   await sendMessage(chatId, `C'è posto a ${available.city} - ${available.address}\nApri: ${available.url}`)
+  // }
 }

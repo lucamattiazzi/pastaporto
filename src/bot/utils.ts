@@ -1,6 +1,6 @@
 import { get as levenshtein } from "fast-levenshtein"
-import { provinces } from "./constants"
-import { Province } from "./types"
+import { provinces } from "../constants"
+import { Province } from "../types"
 
 export function findProvince(text = ""): Province {
   const province = provinces.find(p => {

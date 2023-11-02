@@ -19,3 +19,13 @@ export interface Province {
   name: string
   code: string
 }
+
+export interface Bot {
+  sendMessage: (chatId: number, text: string) => Promise<void>
+}
+
+export interface Db {
+  retrieveSubscriptionsByProvince: () => Promise<SubscriptionGroup[]>
+  addSubscription: (chatId: number, province: string) => Promise<void>
+  removeSubscriptions: (chatId: number) => Promise<void>
+}
