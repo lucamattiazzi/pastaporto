@@ -2,6 +2,7 @@
 import { parse } from "node-html-parser"
 import { Page } from "puppeteer"
 import { Place } from "../types"
+import { sleep } from "../utils"
 
 export function findPlacesFromHTML(html: string): Place[] {
   const parsed = parse(html)
@@ -22,7 +23,7 @@ export function findPlacesFromHTML(html: string): Place[] {
 export async function retrieveAvailable(page: Page, province: string): Promise<Place[]> {
   const url = `https://www.passaportonline.poliziadistato.it/CittadinoAction.do?codop=resultRicercaRegistiProvincia&provincia=${province}`
   await page.goto(url)
-  await page.waitForNavigation()
+  await sleep(1000)
   const pageHtml = await page.content()
   const allPlaces = findPlacesFromHTML(pageHtml)
   const available = allPlaces.filter(p => p.available)

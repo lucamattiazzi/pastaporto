@@ -30,6 +30,6 @@
     "src/server/index.ts",
     "src/db/index.ts",
     "src/constants.ts",
-    "src/bot/utils.ts",
+    "src/utils.ts",
   ]
 }

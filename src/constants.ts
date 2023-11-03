@@ -1,6 +1,4 @@
-export const GOODBYE = "CIAONE"
-
-export const provinces = [
+export const PROVINCES = [
   {
     name: "Agrigento",
     code: "AG"

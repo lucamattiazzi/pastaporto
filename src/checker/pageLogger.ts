@@ -1,11 +1,8 @@
 import puppeteer, { Page } from "puppeteer"
+import { sleep } from "../utils"
 
 const SPID_USERNAME = process.env.SPID_USERNAME || ""
 const SPID_PASSWORD = process.env.SPID_PASSWORD || ""
-
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
 
 function waitForRedirectOrTimeout(page: Page, timeout: number): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -69,7 +66,6 @@ async function goToPassportPage(page) {
   const buttons = await page.$x("//a[contains(., 'Inserisci Appuntamento')]")
   if (!buttons[0]) throw new Error("No buttons found")
   await buttons[0].click()
-  await page.waitForNavigation()
 }
 
 export async function generateLoggedPage(): Promise<Page> {
@@ -83,6 +79,6 @@ export async function generateLoggedPage(): Promise<Page> {
   await goToPoliziaPage(page)
   await sleep(3000)
   await goToPassportPage(page)
-  await sleep(3000)
+  await sleep(5000)
   return page
 }
