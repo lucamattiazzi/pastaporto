@@ -12,8 +12,9 @@ function waitForRedirectOrTimeout(page: Page, timeout: number): Promise<void> {
 }
 
 async function goToSPIDAuth(page: Page) {
-  await page.goto("https://www.passaportonline.poliziadistato.it/LogInAction.do?codop=loginCittadino")
-  const button = await page.$(".italia-it-button-text")
+  await page.goto("https://passaportonline.poliziadistato.it/cittadino/n/sc/loginCittadino/sceltaLogin")
+  await sleep(2000)
+  const button = await page.$(".italia-it-button")
   if (!button) throw new Error("No buttons found")
   button.click()
   await page.waitForNavigation()
@@ -21,14 +22,16 @@ async function goToSPIDAuth(page: Page) {
 }
 
 async function openSPIDList(page: Page) {
-  const button = await page.$(".italia-it-button-text")
+  await sleep(2000)
+  const button = await page.$(".italia-it-button")
   if (!button) throw new Error("No buttons found")
   button.click()
-  await sleep(100)
+  await sleep(1000)
 }
 
 async function goToSPIDLogin(page: Page) {
   const buttonContainer = await page.$('[data-idp="https://posteid.poste.it"]')
+  console.log("buttonContainer", buttonContainer)
   if (!buttonContainer) throw new Error("No buttons found")
   const button = await buttonContainer.$("a")
   if (!button) throw new Error("No buttons found")
@@ -55,6 +58,16 @@ async function generateAndroidNotification(page) {
   await waitForRedirectOrTimeout(page, 60000)
 }
 
+async function acceptCookies(page) {
+  const acceptCookiesButton = await page.$("#acceptCheckbox")
+  if (!acceptCookiesButton) throw new Error("No button found")
+  acceptCookiesButton.click()
+  const confirmButtons = await page.$x("//button[contains(text(), 'Conferma')]")
+  if (!confirmButtons[0]) throw new Error("No buttons found")
+  confirmButtons[0].click()
+  await page.waitForNavigation()(page, 60000)
+}
+
 async function goToPoliziaPage(page) {
   const buttons = await page.$x("//button[contains(., 'Acconsento')]")
   if (!buttons[0]) throw new Error("No buttons found")
@@ -69,14 +82,17 @@ async function goToPassportPage(page) {
 }
 
 export async function generateLoggedPage(): Promise<Page> {
-  const browser = await puppeteer.launch({ headless: "new", args: ["--no-sandbox", "--disable-setuid-sandbox"] })
+  const browser = await puppeteer.launch({ headless: false, args: ["--no-sandbox", "--disable-setuid-sandbox"] })
   const page = await browser.newPage()
+  console.log("page", page)
   await goToSPIDAuth(page)
   await openSPIDList(page)
   await goToSPIDLogin(page)
   await fillForm(page)
   await generateAndroidNotification(page)
   await goToPoliziaPage(page)
+  await sleep(2000)
+  await acceptCookies(page)
   await sleep(3000)
   await goToPassportPage(page)
   await sleep(5000)
